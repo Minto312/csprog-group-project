@@ -5,8 +5,9 @@ public class Item {
         public static final int id = 2;
         public static final String imagePath = "png/feather.png";
 
-        public static void taken() {
-            System.out.println("Feather taken! Move speed increased!");
+        public static void taken(MoveChara chara) {
+            System.out.println("Feather taken! Move speed increase to " + chara.getSpeed() + "!");
+            chara.setSpeed(chara.getSpeed() + 1);
         }
     }
 

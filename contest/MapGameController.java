@@ -153,7 +153,7 @@ public class MapGameController implements Initializable {
             Item.Coin.taken();
         } else if (map_type == MapData.TYPE_FEATHER) {
             mapData.setMap(Cx, Cy, MapData.TYPE_SPACE);
-            Item.Feather.taken();
+            Item.Feather.taken(chara);
         }
         drawMap(chara, mapData);
     }
