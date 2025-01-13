@@ -6,6 +6,7 @@ public class MapData {
     public static final int TYPE_WALL = 1;
     public static final int TYPE_FEATHER = Item.Feather.id;
     public static final int TYPE_COIN = Item.Coin.id;
+    public static final int TYPE_COUNT = 4;
 
     private static final String mapImageFiles[] = {
             "png/SPACE.png",
@@ -21,9 +22,9 @@ public class MapData {
     private int height; // height of the map
 
     MapData(int x, int y) {
-        mapImages = new Image[2];
+        mapImages = new Image[TYPE_COUNT];
         mapImageViews = new ImageView[y][x];
-        for (int i = 0; i < 2; i ++) {
+        for (int i = 0; i < TYPE_COUNT; i ++) {
             mapImages[i] = new Image(mapImageFiles[i]);
         }
 
