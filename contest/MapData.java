@@ -1,15 +1,22 @@
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import java.util.Random;
 
 public class MapData {
     public static final int TYPE_SPACE = 0;
     public static final int TYPE_WALL = 1;
-    public static final int TYPE_OTHERS = 2;
+    public static final int TYPE_FEATHER = Item.Feather.id;
+    public static final int TYPE_COIN = Item.Coin.id;
+    public static final int TYPE_COUNT = 4;
+
     private static final String mapImageFiles[] = {
             "png/SPACE.png",
-            "png/WALL.png"
+            "png/WALL.png",
+            Item.Feather.imagePath,
+            Item.Coin.imagePath,
     };
 
+    private static Random random = new Random();
     private Image[] mapImages;
     private ImageView[][] mapImageViews;
     private int[][] maps;
@@ -17,9 +24,9 @@ public class MapData {
     private int height; // height of the map
 
     MapData(int x, int y) {
-        mapImages = new Image[2];
+        mapImages = new Image[TYPE_COUNT];
         mapImageViews = new ImageView[y][x];
-        for (int i = 0; i < 2; i ++) {
+        for (int i = 0; i < TYPE_COUNT; i ++) {
             mapImages[i] = new Image(mapImageFiles[i]);
         }
 
@@ -58,7 +65,11 @@ public class MapData {
             int dx = dl[i][0];
             int dy = dl[i][1];
             if (getMap(x + dx * 2, y + dy * 2) == MapData.TYPE_WALL) {
-                setMap(x + dx, y + dy, MapData.TYPE_SPACE);
+                if (random.nextInt(100) < 5) {
+                    setMap(x + dx, y + dy, MapData.TYPE_FEATHER);
+                } else {
+                    setMap(x + dx, y + dy, MapData.TYPE_COIN);
+                }
                 digMap(x + dx * 2, y + dy * 2);
             }
         }

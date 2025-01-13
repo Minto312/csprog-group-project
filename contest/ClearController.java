@@ -3,8 +3,20 @@ import java.io.File;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.stage.Stage;
+import javafx.scene.control.Label;
 
 public class ClearController {
+
+	@FXML
+	private Label coin_count;
+
+	public void setStage(Stage stage) {
+		stage.setOnShown(event -> {
+			System.out.println("Item.Coin.getCount() = " + Item.Coin.getCount());
+			coin_count.setText("コインを" + Item.Coin.getCount() + "枚ゲットしました！");
+		});
+	}
 
 	@FXML
 	void onClearAction(ActionEvent event) {

@@ -116,8 +116,10 @@ class StageDB {
                 System.out.println("StageDB:getClearStage()");
                 FXMLLoader loader = new FXMLLoader(mainClass.getResource("MapClear.fxml"));
                 VBox root = loader.load();
+                ClearController controller = loader.getController();
                 Scene scene = new Scene(root);
                 ClearStage = new Stage();
+                controller.setStage(ClearStage);
                 ClearStage.setScene(scene);
             } catch (IOException ioe) {
                 System.err.println(ioe);
