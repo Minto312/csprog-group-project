@@ -16,8 +16,10 @@ class StageDB {
 
     static private Stage mainStage = null;
     static private Stage gameOverStage = null;
+    static private Stage ClearStage = null;
     static private MediaPlayer mainSound = null;
     static private MediaPlayer gameOverSound = null;
+    static private MediaPlayer ClearSound = null;
     static private Class mainClass;
     //この下でメインBGMを決める（BGMのファイル名を書く）
     static private final String mainSoundFileName = "sound/Take_the_sword.mp3"; // BGM by OtoLogic
@@ -55,6 +57,17 @@ class StageDB {
             }
         }
         return gameOverSound;
+    }
+
+    public static MediaPlayer getClearSound() {
+        if (ClearSound == null) {
+            try {
+                // please write down the code for playing gameclear sound
+            } catch (Exception io) {
+                System.err.print(io.getMessage());
+            }
+        }
+        return ClearSound;
     }
 
     public static Stage getMainStage() {
@@ -95,5 +108,23 @@ class StageDB {
             }
         }
         return gameOverStage;
+    }
+
+    public static Stage getClearStage() {
+        if (ClearStage == null) {
+            try {
+                System.out.println("StageDB:getClearStage()");
+                FXMLLoader loader = new FXMLLoader(mainClass.getResource("MapClear.fxml"));
+                VBox root = loader.load();
+                Scene scene = new Scene(root);
+                ClearStage = new Stage();
+                ClearStage.setScene(scene);
+            } catch (IOException ioe) {
+                System.err.println(ioe);
+                System.err.println("Error loading MapClear.fxml: " + ioe.getMessage());
+                ioe.printStackTrace();
+            }
+        }
+        return ClearStage;
     }
 }

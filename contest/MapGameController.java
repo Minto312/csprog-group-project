@@ -12,12 +12,23 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 
 public class MapGameController implements Initializable {
     public MapData mapData;
     public MoveChara chara;
     public GridPane mapGrid;
     public ImageView[] mapImageViews;
+
+    // Show Goal
+    private final String GOAL_IMAGE = "png/GOAL.png";
+    private ImageView goalImageView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -30,6 +41,7 @@ public class MapGameController implements Initializable {
                 mapImageViews[index] = mapData.getImageView(x, y);
             }
         }
+        setGoal();
         drawMap(chara, mapData);
     }
 
@@ -38,17 +50,126 @@ public class MapGameController implements Initializable {
         int cx = c.getPosX();
         int cy = c.getPosY();
         mapGrid.getChildren().clear();
-        for (int y = 0; y < mapData.getHeight(); y ++) {
-            for (int x = 0; x < mapData.getWidth(); x ++) {
+    
+        for (int y = 0; y < mapData.getHeight(); y++) {
+            for (int x = 0; x < mapData.getWidth(); x++) {
                 int index = y * mapData.getWidth() + x;
+    
                 if (x == cx && y == cy) {
                     mapGrid.add(c.getCharaImageView(), x, y);
+                } else if (x == Gx && y == Gy) {
+                    // ゴール座標に☆(画像)を表示
+                    if (goalImageView == null) {
+                        goalImageView = new ImageView(new Image(GOAL_IMAGE));
+                    }
+                    mapGrid.add(goalImageView, x, y);
                 } else {
                     mapGrid.add(mapImageViews[index], x, y);
                 }
             }
         }
     }
+    
+
+    // set Ramdom Goal
+    private int Gx, Gy;
+
+    public void initialize() {
+        // 通路マスの端をリスト化し、ゴール座標をランダムに設定
+        setGoal();
+    }
+    
+    private void setGoal() {
+        List<int[]> edgeSpaces = new ArrayList<>();
+        Random random = new Random();
+    
+        for (int y = 0; y < mapData.getHeight(); y++) {
+            for (int x = 0; x < mapData.getWidth(); x++) {
+                if (mapData.getMap(x, y) == MapData.TYPE_SPACE && isEdge(x, y)) {
+                    // ゴール候補に追加する条件に x>7 と y>7 を追加
+                    if (x>7 && y>7) {
+                        edgeSpaces.add(new int[] { x, y });
+                    }
+                }
+            }
+        }
+    
+        // リストからランダムに選択
+        if (!edgeSpaces.isEmpty()) {
+            int[] goal = edgeSpaces.get(random.nextInt(edgeSpaces.size()));
+            Gx = goal[0];
+            Gy = goal[1];
+            System.out.println("Goal set at: (" + Gx + ", " + Gy + ")");
+        } else {
+            System.err.println("No valid edge spaces found for goal.");
+        }
+    }    
+
+    private boolean isEdge(int x, int y) {
+        // マップの範囲外を除外
+        if (x < 0 || x >= mapData.getWidth() || y < 0 || y >= mapData.getHeight()) {
+            return false;
+        }
+    
+        // 通路マスでないものを除外
+        if (mapData.getMap(x, y) != MapData.TYPE_SPACE) {
+            return false;
+        }
+    
+        // 上下左右の隣接マスをカウント
+        int adjacentSpaces = 0;
+        if (y > 0 && mapData.getMap(x, y - 1) == MapData.TYPE_SPACE) { // 上
+            adjacentSpaces++;
+        }
+        if (y < mapData.getHeight() - 1 && mapData.getMap(x, y + 1) == MapData.TYPE_SPACE) { // 下
+            adjacentSpaces++;
+        }
+        if (x > 0 && mapData.getMap(x - 1, y) == MapData.TYPE_SPACE) { // 左
+            adjacentSpaces++;
+        }
+        if (x < mapData.getWidth() - 1 && mapData.getMap(x + 1, y) == MapData.TYPE_SPACE) { // 右
+            adjacentSpaces++;
+        }
+    
+        // 隣接する通路マスが1つだけの場合
+        return adjacentSpaces == 1;
+    }    
+
+    // Get Character's positions & Check Goal
+    public void CheckPosition() {
+        int Cx = chara.getPosX();
+        int Cy = chara.getPosY();
+
+        if (Cx == Gx && Cy == Gy){
+            getGoal();
+        }
+    }
+
+    public void getGoal() {
+        Scene scene = mapGrid.getScene();
+        if (scene != null) {
+            scene.addEventFilter(KeyEvent.KEY_PRESSED, keyEventFilter);
+        }
+        PauseTransition delay = new PauseTransition(Duration.seconds(1));
+        delay.setOnFinished(event -> {
+            try {
+                StageDB.getMainStage().hide();
+                StageDB.getMainSound().stop();
+                StageDB.getClearStage().show();
+                if (scene != null) {
+                    scene.removeEventFilter(KeyEvent.KEY_PRESSED, keyEventFilter);
+                }
+            } catch (Exception ex) {
+                System.out.println("Error displaying clear stage: " + ex.getMessage());
+            }
+        });
+        delay.play();
+    }
+
+    private final EventHandler<KeyEvent> keyEventFilter = event -> {
+        // キー入力の無効化
+        event.consume();
+    };
 
     // Get users' key actions
     public void keyAction(KeyEvent event) {
@@ -63,6 +184,7 @@ public class MapGameController implements Initializable {
         } else if (key == KeyCode.L) {
             rightButtonAction();
         }
+        CheckPosition();
     }
 
     // Operations for going the cat up
@@ -121,7 +243,14 @@ public class MapGameController implements Initializable {
 
     @FXML
     public void func4ButtonAction(ActionEvent event) {
-        System.out.println("func4: Nothing to do");
+        try {
+            System.out.println("func4");
+            StageDB.getMainStage().hide();
+            StageDB.getMainSound().stop();
+            StageDB.getClearStage().show();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     // Print actions of user inputs
