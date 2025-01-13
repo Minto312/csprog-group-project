@@ -9,6 +9,8 @@
 <VBox fx:controller="ClearController" xmlns:fx="http://javafx.com/fxml">
   <children>
 	        <Label text="ゲームクリア！" />
+			<Label fx:id="coin_count" text="コインの枚数は～～？" />
+
 		<Button onAction="#onClearAction" text="迷路に戻る">
 		</Button>
 
