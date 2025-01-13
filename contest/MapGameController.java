@@ -111,7 +111,7 @@ public class MapGameController implements Initializable {
 
     @FXML
     public void func2ButtonAction(ActionEvent event) {
-        System.out.println("func2: Nothing to do");
+        initialize(null, null);
     }
 
     @FXML
