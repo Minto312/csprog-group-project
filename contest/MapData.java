@@ -4,10 +4,14 @@ import javafx.scene.image.ImageView;
 public class MapData {
     public static final int TYPE_SPACE = 0;
     public static final int TYPE_WALL = 1;
-    public static final int TYPE_OTHERS = 2;
+    public static final int TYPE_FEATHER = Item.Feather.id;
+    public static final int TYPE_COIN = Item.Coin.id;
+
     private static final String mapImageFiles[] = {
             "png/SPACE.png",
-            "png/WALL.png"
+            "png/WALL.png",
+            Item.Feather.imagePath,
+            Item.Coin.imagePath,
     };
 
     private Image[] mapImages;
