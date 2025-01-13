@@ -85,7 +85,7 @@ public class MapGameController implements Initializable {
     
         for (int y = 0; y < mapData.getHeight(); y++) {
             for (int x = 0; x < mapData.getWidth(); x++) {
-                if (mapData.getMap(x, y) == MapData.TYPE_SPACE && isEdge(x, y)) {
+                if (mapData.getMap(x, y) != MapData.TYPE_WALL && isEdge(x, y)) {
                     // ゴール候補に追加する条件に x>7 と y>7 を追加
                     if (x>7 && y>7) {
                         edgeSpaces.add(new int[] { x, y });
@@ -112,22 +112,22 @@ public class MapGameController implements Initializable {
         }
     
         // 通路マスでないものを除外
-        if (mapData.getMap(x, y) != MapData.TYPE_SPACE) {
-            return false;
-        }
+        // if (mapData.getMap(x, y) != MapData.TYPE_SPACE) {
+        //     return false;
+        // }
     
         // 上下左右の隣接マスをカウント
         int adjacentSpaces = 0;
-        if (y > 0 && mapData.getMap(x, y - 1) == MapData.TYPE_SPACE) { // 上
+        if (y > 0 && mapData.getMap(x, y - 1) != MapData.TYPE_WALL) { // 上
             adjacentSpaces++;
         }
-        if (y < mapData.getHeight() - 1 && mapData.getMap(x, y + 1) == MapData.TYPE_SPACE) { // 下
+        if (y < mapData.getHeight() - 1 && mapData.getMap(x, y + 1) != MapData.TYPE_WALL) { // 下
             adjacentSpaces++;
         }
-        if (x > 0 && mapData.getMap(x - 1, y) == MapData.TYPE_SPACE) { // 左
+        if (x > 0 && mapData.getMap(x - 1, y) != MapData.TYPE_WALL) { // 左
             adjacentSpaces++;
         }
-        if (x < mapData.getWidth() - 1 && mapData.getMap(x + 1, y) == MapData.TYPE_SPACE) { // 右
+        if (x < mapData.getWidth() - 1 && mapData.getMap(x + 1, y) != MapData.TYPE_WALL) { // 右
             adjacentSpaces++;
         }
     
