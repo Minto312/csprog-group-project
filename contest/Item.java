@@ -14,8 +14,15 @@ public class Item {
         public static final int id = 3;
         public static final String imagePath = "png/coin.png";
 
+        private static int count = 0;
+
         public static void taken() {
-            System.out.println("Coin taken! Count increased!");
+            count++;
+            System.out.println("Coin taken! Total: " + count);
+        }
+
+        public static int getCount() {
+            return count;
         }
     }
 }
