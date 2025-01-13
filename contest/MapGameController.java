@@ -64,6 +64,8 @@ public class MapGameController implements Initializable {
                     }
                     mapGrid.add(goalImageView, x, y);
                 } else {
+                    mapData.setImageViews();
+                    mapImageViews[index] = mapData.getImageView(x, y);
                     mapGrid.add(mapImageViews[index], x, y);
                 }
             }
@@ -139,10 +141,21 @@ public class MapGameController implements Initializable {
     public void CheckPosition() {
         int Cx = chara.getPosX();
         int Cy = chara.getPosY();
+        int map_type = mapData.getMap(Cx, Cy);
 
         if (Cx == Gx && Cy == Gy){
             getGoal();
         }
+
+        System.out.println("map_type:" + map_type);
+        if (map_type == MapData.TYPE_COIN) {
+            mapData.setMap(Cx, Cy, MapData.TYPE_SPACE);
+            Item.Coin.taken();
+        } else if (map_type == MapData.TYPE_FEATHER) {
+            mapData.setMap(Cx, Cy, MapData.TYPE_SPACE);
+            Item.Feather.taken();
+        }
+        drawMap(chara, mapData);
     }
 
     public void getGoal() {
