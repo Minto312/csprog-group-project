@@ -1,5 +1,6 @@
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import java.util.Random;
 
 public class MapData {
     public static final int TYPE_SPACE = 0;
@@ -15,6 +16,7 @@ public class MapData {
             Item.Coin.imagePath,
     };
 
+    private static Random random = new Random();
     private Image[] mapImages;
     private ImageView[][] mapImageViews;
     private int[][] maps;
@@ -63,7 +65,11 @@ public class MapData {
             int dx = dl[i][0];
             int dy = dl[i][1];
             if (getMap(x + dx * 2, y + dy * 2) == MapData.TYPE_WALL) {
-                setMap(x + dx, y + dy, MapData.TYPE_SPACE);
+                if (random.nextInt(100) < 5) {
+                    setMap(x + dx, y + dy, MapData.TYPE_FEATHER);
+                } else {
+                    setMap(x + dx, y + dy, MapData.TYPE_COIN);
+                }
                 digMap(x + dx * 2, y + dy * 2);
             }
         }
