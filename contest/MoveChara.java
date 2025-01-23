@@ -13,6 +13,8 @@ public class MoveChara {
     public static final int TYPE_RIGHT = 2;
     public static final int TYPE_UP = 3;
 
+    private static int speed = 1;
+
     private final String[] directions = { "Down", "Left", "Right", "Up" };
     private final String[] animationNumbers = { "1", "2", "3" };
     private final String pngPathPre = "png/kenta";
@@ -86,21 +88,26 @@ public class MoveChara {
 
     // check whether the cat can move on
     private boolean isMovable(int dx, int dy) {
-        if (mapData.getMap(posX + dx, posY + dy) == MapData.TYPE_WALL) {
-            return false;
-        } else if (mapData.getMap(posX + dx, posY + dy) == MapData.TYPE_SPACE) {
-            return true;
-        }
-        return false;
+        return mapData.getMap(posX + dx, posY + dy) != MapData.TYPE_WALL;
     }
 
     // move the cat
     public boolean move(int dx, int dy) {
-        if (isMovable(dx, dy)) {
-            posX += dx;
-            posY += dy;
-            System.out.println("chara[X,Y]:" + posX + "," + posY);
+        boolean moved = false;
 
+        for (int i = 0; i < speed; i++) {
+            if (isMovable(dx, dy)) {
+                posX += dx;
+                posY += dy;
+                moved = true;
+                System.out.println("chara[X,Y]:" + posX + "," + posY);
+            } else {
+                System.out.println("Cannot move further, obstacle encountered.");
+                break;
+            }
+        }
+
+        if (moved) {
             // 歩行効果音を再生
             playSound(stepSoundFile);
 
@@ -137,6 +144,14 @@ public class MoveChara {
     // getter: y-positon of the cat
     public int getPosY() {
         return posY;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     // Show the cat animation
