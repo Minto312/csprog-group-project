@@ -1,11 +1,18 @@
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Label;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
@@ -23,6 +30,10 @@ import java.util.Random;
 
 public class MapGameController implements Initializable {
     public MapData mapData;
+    public MapData First;
+    public MapData Second;
+    public int floor;
+    public boolean StairCheck;
     public MoveChara chara;
     public GridPane mapGrid;
     public ImageView[] mapImageViews;
@@ -32,10 +43,18 @@ public class MapGameController implements Initializable {
     // Show Goal
     private final String GOAL_IMAGE = "png/GOAL.png";
     private ImageView goalImageView;
+    //Show Stair
+    private final String STAIR_UP_IMAGE = "png/Stair_up.png";
+    private ImageView stairupImageView;
+    private final String STAIR_DOWN_IMAGE = "png/Stair_down.png";
+    private ImageView stairdownImageView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         mapData = new MapData(21, 15);
+        Second = new MapData(21, 15);
+        floor = 0;
+        StairCheck = true;
         chara = new MoveChara(1, 1, mapData);
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
         maskImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
@@ -73,6 +92,18 @@ public class MapGameController implements Initializable {
                         goalImageView = new ImageView(new Image(GOAL_IMAGE));
                     }
                     cell.getChildren().add(goalImageView);
+                } else if (x == 1 && y == 13 && floor == 0) {
+                    // １階(1,13)に上り階段の(画像)を表示
+                    if (stairupImageView == null) {
+                        stairupImageView = new ImageView(new Image(STAIR_UP_IMAGE));
+                    }
+                    mapGrid.add(stairupImageView, x, y);
+                } else if (x == 1 && y == 13 && floor == 1) {
+                    // ２階(1,13)に下り階段の(画像)を表示
+                    if (stairdownImageView == null) {
+                        stairdownImageView = new ImageView(new Image(STAIR_DOWN_IMAGE));
+                    }
+                    mapGrid.add(stairdownImageView, x, y);
                 } else {
                     mapData.setImageViews();
                     mapImageViews[index] = mapData.getImageView(x, y);
@@ -164,6 +195,16 @@ public class MapGameController implements Initializable {
         if (Cx == Gx && Cy == Gy){
             getGoal();
         }
+        
+        StairCheck = true;
+        if (Cx == 1 && Cy == 13) {
+            saveMap(floor);
+            floor = (floor + 1)%2 ;
+            StairCheck = false;
+            getStair(floor);
+            chara = new MoveChara(1, 13, mapData);
+            System.out.println("別の階に移動した!");
+        }
 
         System.out.println("map_type:" + map_type);
         if (map_type == MapData.TYPE_COIN) {
@@ -176,6 +217,23 @@ public class MapGameController implements Initializable {
         drawMap(chara, mapData);
     }
 
+    public void saveMap(int floor) { 
+        if(floor == 0) {
+            First = mapData;
+        } else {
+            Second = mapData;
+        }
+    }
+
+    public void getStair(int floor) {
+        if (floor == 0) {
+            mapData = First;
+            drawMap(chara, mapData);
+        } else {
+            mapData = Second;
+            drawMap(chara, mapData);
+        }
+    }
     public void getGoal() {
         Scene scene = mapGrid.getScene();
         if (scene != null) {
