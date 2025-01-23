@@ -13,6 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class MapGameController implements Initializable {
     public MoveChara chara;
     public GridPane mapGrid;
     public ImageView[] mapImageViews;
+    public ImageView[] maskImageViews;
+    private static final int VISION_RADIUS = 2; 
 
     // Show Goal
     private final String GOAL_IMAGE = "png/GOAL.png";
@@ -35,12 +38,18 @@ public class MapGameController implements Initializable {
         mapData = new MapData(21, 15);
         chara = new MoveChara(1, 1, mapData);
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
-        for (int y = 0; y < mapData.getHeight(); y ++) {
-            for (int x = 0; x < mapData.getWidth(); x ++) {
+        maskImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
+        for (int y = 0; y < mapData.getHeight(); y++) {
+            for (int x = 0; x < mapData.getWidth(); x++) {
                 int index = y * mapData.getWidth() + x;
                 mapImageViews[index] = mapData.getImageView(x, y);
+
+                Image maskImage = new Image("png/BLACK_MASK.png");
+                maskImageViews[index] = new ImageView(maskImage);
+                maskImageViews[index].setVisible(true);
             }
         }
+
         setGoal();
         drawMap(chara, mapData);
     }
@@ -53,21 +62,30 @@ public class MapGameController implements Initializable {
     
         for (int y = 0; y < mapData.getHeight(); y++) {
             for (int x = 0; x < mapData.getWidth(); x++) {
+                StackPane cell = new StackPane();
                 int index = y * mapData.getWidth() + x;
     
                 if (x == cx && y == cy) {
-                    mapGrid.add(c.getCharaImageView(), x, y);
+                    cell.getChildren().add(c.getCharaImageView());
                 } else if (x == Gx && y == Gy) {
                     // ゴール座標に☆(画像)を表示
                     if (goalImageView == null) {
                         goalImageView = new ImageView(new Image(GOAL_IMAGE));
                     }
-                    mapGrid.add(goalImageView, x, y);
+                    cell.getChildren().add(goalImageView);
                 } else {
                     mapData.setImageViews();
                     mapImageViews[index] = mapData.getImageView(x, y);
-                    mapGrid.add(mapImageViews[index], x, y);
+                    cell.getChildren().add(mapImageViews[index]);
                 }
+
+                // 視界のマスクを配置
+                if (Math.abs(cx - x) <= VISION_RADIUS && Math.abs(cy - y) <= VISION_RADIUS) {
+                    // キャラクター周囲のマスクを外す
+                    maskImageViews[index].setVisible(false);
+                } 
+                cell.getChildren().add(maskImageViews[index]);
+                mapGrid.add(cell, x, y);
             }
         }
     }
