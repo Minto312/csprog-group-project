@@ -46,6 +46,7 @@ public class MapGameController implements Initializable {
 
                 Image maskImage = new Image("png/BLACK_MASK.png");
                 maskImageViews[index] = new ImageView(maskImage);
+                maskImageViews[index].setVisible(true);
             }
         }
 
@@ -80,12 +81,9 @@ public class MapGameController implements Initializable {
 
                 // 視界のマスクを配置
                 if (Math.abs(cx - x) <= VISION_RADIUS && Math.abs(cy - y) <= VISION_RADIUS) {
-                    // キャラクター周囲はマスクしない
+                    // キャラクター周囲のマスクを外す
                     maskImageViews[index].setVisible(false);
-                } else {
-                    // それ以外はマスクを表示
-                    maskImageViews[index].setVisible(true);
-                }
+                } 
                 cell.getChildren().add(maskImageViews[index]);
                 mapGrid.add(cell, x, y);
             }
