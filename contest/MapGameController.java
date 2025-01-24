@@ -235,9 +235,11 @@ public class MapGameController implements Initializable {
     public void getStair(int floor) {
         if (floor == 0) {
             mapData = First;
+            currentMaskImageViews = maskImageViews;
             drawMap(chara, mapData);
         } else {
             mapData = Second;
+            currentMaskImageViews = secondMaskImageViews;
             drawMap(chara, mapData);
         }
     }
