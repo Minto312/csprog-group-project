@@ -97,13 +97,13 @@ public class MapGameController implements Initializable {
                     if (stairupImageView == null) {
                         stairupImageView = new ImageView(new Image(STAIR_UP_IMAGE));
                     }
-                    mapGrid.add(stairupImageView, x, y);
+                    cell.getChildren().add(stairupImageView, x, y);
                 } else if (x == 1 && y == 13 && floor == 1) {
                     // ２階(1,13)に下り階段の(画像)を表示
                     if (stairdownImageView == null) {
                         stairdownImageView = new ImageView(new Image(STAIR_DOWN_IMAGE));
                     }
-                    mapGrid.add(stairdownImageView, x, y);
+                    cell.getChildren().add(stairdownImageView, x, y);
                 } else {
                     mapData.setImageViews();
                     mapImageViews[index] = mapData.getImageView(x, y);
