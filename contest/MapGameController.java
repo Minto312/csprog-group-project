@@ -37,7 +37,9 @@ public class MapGameController implements Initializable {
     public MoveChara chara;
     public GridPane mapGrid;
     public ImageView[] mapImageViews;
+    public ImageView[] currentMaskImageViews;
     public ImageView[] maskImageViews;
+    public ImageView[] secondMaskImageViews;
     private static final int VISION_RADIUS = 2; 
 
     // Show Goal
@@ -58,6 +60,7 @@ public class MapGameController implements Initializable {
         chara = new MoveChara(1, 1, mapData);
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
         maskImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
+        secondMaskImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
         for (int y = 0; y < mapData.getHeight(); y++) {
             for (int x = 0; x < mapData.getWidth(); x++) {
                 int index = y * mapData.getWidth() + x;
@@ -65,7 +68,11 @@ public class MapGameController implements Initializable {
 
                 Image maskImage = new Image("png/BLACK_MASK.png");
                 maskImageViews[index] = new ImageView(maskImage);
+                secondMaskImageViews[index] = new ImageView(maskImage);
                 maskImageViews[index].setVisible(true);
+                secondMaskImageViews[index].setVisible(true);
+
+                currentMaskImageViews = maskImageViews;
             }
         }
 
@@ -113,9 +120,9 @@ public class MapGameController implements Initializable {
                 // 視界のマスクを配置
                 if (Math.abs(cx - x) <= VISION_RADIUS && Math.abs(cy - y) <= VISION_RADIUS) {
                     // キャラクター周囲のマスクを外す
-                    maskImageViews[index].setVisible(false);
+                    currentMaskImageViews[index].setVisible(false);
                 } 
-                cell.getChildren().add(maskImageViews[index]);
+                cell.getChildren().add(currentMaskImageViews[index]);
                 mapGrid.add(cell, x, y);
             }
         }
