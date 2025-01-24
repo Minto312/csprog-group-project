@@ -93,7 +93,7 @@ public class MapGameController implements Initializable {
     
                 if (x == cx && y == cy) {
                     cell.getChildren().add(c.getCharaImageView());
-                } else if (x == Gx && y == Gy) {
+                } else if (x == Gx && y == Gy && floor == 1) {
                     // ゴール座標に☆(画像)を表示
                     if (goalImageView == null) {
                         goalImageView = new ImageView(new Image(GOAL_IMAGE));
@@ -199,7 +199,7 @@ public class MapGameController implements Initializable {
         int Cy = chara.getPosY();
         int map_type = mapData.getMap(Cx, Cy);
 
-        if (Cx == Gx && Cy == Gy){
+        if (Cx == Gx && Cy == Gy && floor == 1) {
             getGoal();
         }
         
